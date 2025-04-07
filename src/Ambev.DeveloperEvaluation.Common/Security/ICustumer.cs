@@ -1,14 +1,12 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
-using System.Security.Principal;
 
 namespace Ambev.DeveloperEvaluation.Domain.Interfaces
 {
-    public interface IProduct 
+    public interface ICustomer
     {
-        Guid ProductId { get; }
         string Name { get; }
-        string? Description { get; }
-        decimal UnitPrice { get; }
+        string Email { get; }
+        string Phone { get; }
         DateTime CreatedAt { get; }
         ValidationResultDetail Validate();
     }

@@ -1,44 +1,44 @@
-using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Interfaces;
 using Ambev.DeveloperEvaluation.Domain.Validation;
-
-namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
 public class Sale : BaseEntity, ISale
 {
-    public int SaleNumber { get; set; }
-    public DateTime SaleDate { get; set; }
+    public Guid SaleId { get; private set; } = Guid.NewGuid();
+    public int SaleNumber { get; private set; }
+    public DateTime SaleDate { get; private set; }
+    public Guid CustomerId { get; private set; }
+    public Guid BranchId { get; private set; }
+    public decimal TotalAmount { get; private set; }
+    public bool IsCancelled { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
-    /// <summary>
-    /// Identificador do usuário que realizou a venda (antigo CustomerId).
-    /// </summary>
-    public Guid UserId { get; set; }
+    // Propriedades de navegação — ESSENCIAIS para o EF gerar as FKs
+    public Customer? Customer { get; private set; }
+    public Branch? Branch { get; private set; }
 
-    /// <summary>
-    /// Lista de produtos vendidos, com quantidade, valor e desconto.
-    /// </summary>
-    public List<SaleItem> Products { get; set; } = new();
+    public List<SaleItem> SaleItems { get; private set; } = new();
 
-    public decimal TotalAmount { get; set; }
-    public bool IsCancelled { get; set; }
-    public DateTime CreatedAt { get; set; }
 
-    // Interface mapping
-    string ISale.Id => Id.ToString();
-    int ISale.SaleNumber => SaleNumber;
-    DateTime ISale.SaleDate => SaleDate;
-    string ISale.CustomerId => UserId.ToString(); // Pode-se renomear ISale para ICart ou IOrder futuramente
-    string ISale.BranchId => string.Empty; // Remover se não estiver usando filiais
-    decimal ISale.TotalAmount => TotalAmount;
-    bool ISale.IsCancelled => IsCancelled;
-
-    public Sale()
+    public Sale(Guid customerId, Guid branchId)
     {
+        CustomerId = customerId;
+        BranchId = branchId;
         SaleDate = DateTime.UtcNow;
         CreatedAt = DateTime.UtcNow;
-        TotalAmount = 0;
         IsCancelled = false;
+    }
+
+    public void Cancel()
+    {
+        IsCancelled = true;
+    }
+
+    public void AddSaleItem(SaleItem item)
+    {
+        SaleItems.Add(item);
+        TotalAmount += item.Total;
     }
 
     public ValidationResultDetail Validate()
@@ -50,10 +50,5 @@ public class Sale : BaseEntity, ISale
             IsValid = result.IsValid,
             Errors = result.Errors.Select(e => (ValidationErrorDetail)e)
         };
-    }
-
-    public void Cancel()
-    {
-        IsCancelled = true;
     }
 }

@@ -1,14 +1,18 @@
-﻿namespace Ambev.DeveloperEvaluation.Common.Security 
+﻿using Ambev.DeveloperEvaluation.Common.Validation;
+
+namespace Ambev.DeveloperEvaluation.Domain.Interfaces
 {
     public interface ISale
     {
-        string Id { get; }
+        Guid SaleId { get; }
         int SaleNumber { get; }
         DateTime SaleDate { get; }
-        string CustomerId { get; }
-        string BranchId { get; }
+        Guid CustomerId { get; }
+        Guid BranchId { get; }
         decimal TotalAmount { get; }
         bool IsCancelled { get; }
-    }
+        DateTime CreatedAt { get; }
 
+        ValidationResultDetail Validate();
+    }
 }

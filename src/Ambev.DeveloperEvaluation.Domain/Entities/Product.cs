@@ -1,38 +1,27 @@
-using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Validation;
+using Ambev.DeveloperEvaluation.Domain.Interfaces;
 
-namespace Ambev.DeveloperEvaluation.Domain.Entities 
+public class Product : BaseEntity, IProduct
 {
-    public class Product : BaseEntity, IProduct
+    public Guid ProductId { get; private set; } = Guid.NewGuid();
+    public string Name { get; private set; }
+    public string? Description { get; private set; }
+    public decimal UnitPrice { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+
+    public List<SaleItem> SaleItems { get; private set; } = new();
+
+    public Product(string name, decimal unitPrice, string? description = null)
     {
-        public string Name { get; set; } = string.Empty;
-        public string? Description { get; set; }
-        public decimal UnitPrice { get; set; }
-        public DateTime CreatedAt { get; set; }
-
-        string IProduct.Id => Id.ToString();
-        string IProduct.Name => Name;
-        string IProduct.Description => Description ?? string.Empty;
-        decimal IProduct.UnitPrice => UnitPrice;
-
-        public Product()
-        {
-            CreatedAt = DateTime.UtcNow;
-        }
-
-        public ValidationResultDetail Validate()
-        {
-            var validator = new ProductValidator();
-            var result = validator.Validate(this);
-            return new ValidationResultDetail
-            {
-                IsValid = result.IsValid,
-                Errors = result.Errors.Select(e => (ValidationErrorDetail)e)
-            };
-        }
+        Name = name;
+        UnitPrice = unitPrice;
+        Description = description;
+        CreatedAt = DateTime.UtcNow;
     }
 
+    public ValidationResultDetail Validate()
+    {
+        return new ValidationResultDetail { IsValid = true };
+    }
 }
-

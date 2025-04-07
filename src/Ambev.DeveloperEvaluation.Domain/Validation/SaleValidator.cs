@@ -7,14 +7,17 @@ public class SaleValidator : AbstractValidator<Sale>
 {
     public SaleValidator()
     {
-        RuleFor(s => s.UserId)
-            .NotEmpty().WithMessage("UserId is required.");
+        RuleFor(s => s.CustomerId)
+            .NotEmpty().WithMessage("CustomerId is required.");
+
+        RuleFor(s => s.BranchId)
+            .NotEmpty().WithMessage("BranchId is required.");
 
         RuleFor(s => s.SaleDate)
             .LessThanOrEqualTo(DateTime.UtcNow)
             .WithMessage("Sale date cannot be in the future.");
 
-        RuleForEach(s => s.Products)
-            .SetValidator(new SaleItemValidator());
+        RuleForEach(s => s.SaleItems) // <- corrigido aqui
+           .SetValidator(new SaleItemValidator());
     }
 }

@@ -39,7 +39,12 @@ public class JwtTokenGenerator : IJwtTokenGenerator
     public string GenerateToken(IUser user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:SecretKey"]);
+        var secret = _configuration["Jwt:SecretKey"];
+
+        if (string.IsNullOrWhiteSpace(secret))
+            throw new InvalidOperationException("JWT secret key is not configured.");
+
+        var key = Encoding.ASCII.GetBytes(secret);
 
         var claims = new[]
         {

@@ -1,46 +1,64 @@
-using Ambev.DeveloperEvaluation.Common.Security;
 using Ambev.DeveloperEvaluation.Common.Validation;
 using Ambev.DeveloperEvaluation.Domain.Common;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Validation;
+using Ambev.DeveloperEvaluation.Domain.Interfaces;
 
 public class SaleItem : BaseEntity, ISaleItem
 {
-    public Guid SaleId { get; set; }
-    public Guid ProductId { get; set; }
+    public Guid SaleItemId { get; private set; } = Guid.NewGuid();
+    public Guid SaleId { get; private set; }
+    public Guid ProductId { get; private set; }
+    public int Quantity { get; private set; }
+    public decimal UnitPrice { get; private set; }
+    public decimal Discount { get; private set; }
+    public decimal Total { get; private set; }
+    public bool IsCancelled { get; private set; }
 
-    /// <summary>
-    /// Quantidade do produto no carrinho.
-    /// </summary>
-    public int Quantity { get; set; }
-
-    public decimal UnitPrice { get; set; }
-    public decimal Discount { get; set; }
-    public decimal Total { get; set; }
-    public bool IsCancelled { get; set; }
-
-    string ISaleItem.Id => Id.ToString();
-    string ISaleItem.SaleId => SaleId.ToString();
-    string ISaleItem.ProductId => ProductId.ToString();
-    int ISaleItem.Quantity => Quantity;
-    decimal ISaleItem.UnitPrice => UnitPrice;
-    decimal ISaleItem.Discount => Discount;
-    decimal ISaleItem.Total => Total;
-    bool ISaleItem.IsCancelled => IsCancelled;
-
-    public ValidationResultDetail Validate()
+    public SaleItem(Guid saleId, Guid productId, int quantity, decimal unitPrice, decimal discount)
     {
-        var validator = new SaleItemValidator();
-        var result = validator.Validate(this);
-        return new ValidationResultDetail
-        {
-            IsValid = result.IsValid,
-            Errors = result.Errors.Select(e => (ValidationErrorDetail)e)
-        };
+        SaleId = saleId;
+        ProductId = productId;
+        Quantity = quantity;
+        UnitPrice = unitPrice;
+        Discount = discount;
+        Total = CalculateTotal();
+        IsCancelled = false;
+    }
+
+    private decimal CalculateTotal()
+    {
+        var subtotal = UnitPrice * Quantity;
+        var discountAmount = subtotal * (Discount / 100m);
+        return subtotal - discountAmount;
     }
 
     public void Cancel()
     {
         IsCancelled = true;
     }
+
+    public ValidationResultDetail Validate()
+    {
+        var errors = new List<ValidationErrorDetail>();
+
+        if (Quantity <= 0 || Quantity > 20)
+            errors.Add(new ValidationErrorDetail
+            {
+                Error = "Quantity",
+                Detail = "Quantity must be between 1 and 20"
+            });
+
+        if (!(new[] { 0m, 10m, 20m }.Contains(Discount)))
+            errors.Add(new ValidationErrorDetail
+            {
+                Error = "Discount",
+                Detail = "Discount must be 0, 10 or 20"
+            });
+
+        return new ValidationResultDetail
+        {
+            IsValid = !errors.Any(),
+            Errors = errors
+        };
+    }
+
 }
