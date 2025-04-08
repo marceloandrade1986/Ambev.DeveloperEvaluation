@@ -121,7 +121,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Custumers");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Product", b =>

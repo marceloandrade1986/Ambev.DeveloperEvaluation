@@ -13,13 +13,14 @@ public class SaleItem : BaseEntity, ISaleItem
     public decimal Total { get; private set; }
     public bool IsCancelled { get; private set; }
 
-    public SaleItem(Guid saleId, Guid productId, int quantity, decimal unitPrice, decimal discount)
+    public SaleItem(Guid saleId, Guid productId, int quantity, decimal unitPrice, decimal discount, decimal total)
     {
         SaleId = saleId;
         ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
         Discount = discount;
+        Total = total;
         Total = CalculateTotal();
         IsCancelled = false;
     }

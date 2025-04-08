@@ -27,7 +27,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Custumers",
+                name: "Customers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -39,7 +39,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Custumers", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,9 +101,9 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Sales_Custumers_CustomerId",
+                        name: "FK_Sales_Customers_CustomerId",
                         column: x => x.CustomerId,
-                        principalTable: "Custumers",
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -179,7 +179,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Migrations
                 name: "Branches");
 
             migrationBuilder.DropTable(
-                name: "Custumers");
+                name: "Customers");
         }
     }
 }

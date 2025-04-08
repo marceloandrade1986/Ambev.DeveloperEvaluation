@@ -1,30 +1,26 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Enums;
-using FluentValidation;
+﻿using FluentValidation;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 
 namespace Ambev.DeveloperEvaluation.Domain.Validation;
-
 
 public class SaleItemValidator : AbstractValidator<SaleItem>
 {
     public SaleItemValidator()
     {
         RuleFor(i => i.ProductId)
-            .NotEmpty();
+            .NotEmpty().WithMessage("Product ID is required.");
 
         RuleFor(i => i.Quantity)
-            .InclusiveBetween(1, 20)
-            .WithMessage("Quantity must be between 1 and 20.");
+            .InclusiveBetween(1, 20).WithMessage("Quantity must be between 1 and 20.");
 
         RuleFor(i => i.UnitPrice)
-            .GreaterThan(0)
-            .WithMessage("Unit price must be greater than zero.");
+            .GreaterThan(0).WithMessage("Unit price must be greater than zero.");
 
         RuleFor(i => i.Discount)
-            .Must(d => d == 0 || d == 10 || d == 20)
-            .WithMessage("Discount must be 0%, 10%, or 20%.");
+            .Must(d => d == 0m || d == 10m || d == 20m)
+            .WithMessage("Discount must be 0, 10 or 20.");
 
         RuleFor(i => i.Total)
-            .GreaterThanOrEqualTo(0);
+            .GreaterThan(0).WithMessage("Total must be greater than zero.");
     }
 }
